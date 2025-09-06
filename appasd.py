@@ -71,7 +71,7 @@ def nhap_du_lieu():
     relation_val = relation_map[relation]
 
     # Gộp thành vector đặc trưng
-    features = a_scores + [age, gender_val, jundice_val, autism_val, used_app_val] + relation_val
+    features = a_scores + [age, gender_val, jundice_val, autism_val, used_app_before_val] + relation_val
     return np.array([features])
 
 # Hàm dự đoán
