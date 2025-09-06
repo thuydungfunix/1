@@ -60,7 +60,7 @@ def nhap_du_lieu():
     gender_val = 1 if gender == "Nam" else 0
     jundice_val = 1 if jundice == "Có" else 0
     autism_val = 1 if autism == "Có" else 0
-    used_app_val = 1 if used_app == "Rồi" else 0
+    used_app_before_val = 1 if used_app_before == "Rồi" else 0
 
     relation_map = {
         "Bố": [1, 0, 0, 0],
