@@ -16,7 +16,7 @@ from catboost import CatBoostClassifier
 @st.cache_resource
 def load_model():
     model = CatBoostClassifier()
-    model.load_model("catboost_model(1).cbm")  # file .cbm bạn đã train
+    model.load_model("catboost_model.cbm")  
     return model
 
 model = load_model()
