@@ -1,5 +1,4 @@
-streamlit
-catboost
-numpy
-pandas
-scikit-learn
+streamlit==1.38.0
+catboost==1.2.5
+numpy==1.26.4
+
