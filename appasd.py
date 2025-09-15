@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 from catboost import CatBoostClassifier
 
-# ⚙️ Cấu hình trang (nên đặt ngay sau import để tránh warning)
+# ⚙️ Cấu hình trang 
 st.set_page_config(page_title="Sàng Lọc Tự Kỷ", page_icon="🧠", layout="centered")
 
 # 📂 Hàm tải mô hình CatBoost
