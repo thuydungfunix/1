@@ -233,9 +233,20 @@ if st.button("📊 Dự đoán khả năng tự kỷ"):
                 st.write(f"👉 Xác suất mắc tự kỷ (ASD): **{proba:.2f}**")
                 st.markdown("### 🧭 Gợi ý hành động tiếp theo:")
                 if pred == 1:
-                    st.error(\"\"\"\n                    ⚠️ Nguy cơ cao mắc ASD.\n                    🔹 Hãy liên hệ chuyên gia tâm lý hoặc cơ sở y tế để được tư vấn kỹ lưỡng hơn.\n                    🔹 Ghi chép lại các biểu hiện thường gặp trong cuộc sống hàng ngày.\n                    🔹 Có thể tham khảo tài liệu về ASD từ WHO, CDC hoặc các trung tâm hỗ trợ trong nước.\n                    \"\"\")
+                   st.error("""
+⚠️ Nguy cơ cao mắc ASD.
+🔹 Hãy liên hệ chuyên gia tâm lý hoặc cơ sở y tế để được tư vấn kỹ lưỡng hơn.
+🔹 Ghi chép lại các biểu hiện thường gặp trong cuộc sống hàng ngày.
+🔹 Có thể tham khảo tài liệu về ASD từ WHO, CDC hoặc các trung tâm hỗ trợ trong nước.
+""")
+
                 else:
-                    st.success(\"\"\"\n                    ✅ Nguy cơ thấp mắc ASD.\n                    🔹 Bạn có thể yên tâm ở thời điểm hiện tại.\n                    🔹 Nếu vẫn còn băn khoăn, hãy trao đổi thêm với chuyên gia.\n                    \"\"\")
+                  st.success("""
+✅ Nguy cơ thấp mắc ASD.
+🔹 Bạn có thể yên tâm ở thời điểm hiện tại.
+🔹 Nếu vẫn còn băn khoăn, hãy trao đổi thêm với chuyên gia.
+""")
+
             except Exception as e:
                 st.error(f"Đã xảy ra lỗi khi dự đoán: {e}")
 
