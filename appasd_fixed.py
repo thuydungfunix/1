@@ -250,5 +250,5 @@ if st.button("📊 Dự đoán khả năng tự kỷ"):
             except Exception as e:
                 st.error(f"Đã xảy ra lỗi khi dự đoán: {e}")
 
-st.markdown(\"---\")
+st.markdown("---")
 st.caption(\"Ghi chú: Ứng dụng này sử dụng file model CatBoost (.cbm) và ánh xạ các đặc trưng bằng LabelEncoder dựa trên bộ dữ liệu ARFF cung cấp. Nếu bạn muốn thay đổi pipeline tiền xử lý (ví dụ: giữ relation, used_app_before), vui lòng gửi file code training để chúng tôi tái tạo chính xác quy trình tiền xử lý.\") 
