@@ -13,7 +13,7 @@ except ImportError:
     shap_installed = False
 
 # ⚙️ Cấu hình trang
-st.set_page_config(page_title="ASD Screening", page_icon="🧠", layout="centered")
+st.set_page_config(page_title="Ứng dụng Sàng lọc Tự kỷ", page_icon="🧠", layout="centered")
 
 # 📂 Hàm tải mô hình
 @st.cache_resource
@@ -24,79 +24,76 @@ def load_model():
 
 model = load_model()
 
-# --- Giao diện nhập liệu ---
-st.title("🧠 Autism Screening App (CatBoost)")
-st.subheader("Nhập thông tin để sàng lọc")
+# --- Giao diện ---
+st.title("🧠 Ứng dụng Sàng lọc Tự kỷ (CatBoost)")
+st.subheader("Vui lòng trả lời 10 câu hỏi AQ-10 và thông tin cơ bản")
 
+# 📋 Bộ 10 câu hỏi AQ-10 (tiếng Việt)
+questions_vi = [
+    "1. Người được đánh giá có thường tránh giao tiếp bằng mắt không?",
+    "2. Người đó có thích chơi một mình hơn là cùng người khác không?",
+    "3. Người đó có hay lặp lại từ/ngôn ngữ không?",
+    "4. Người đó có khó khăn khi hiểu cảm xúc của người khác không?",
+    "5. Người đó có khi nào không phản hồi khi được gọi tên không?",
+    "6. Người đó có nhạy cảm quá mức với âm thanh không?",
+    "7. Người đó có ít chia sẻ hứng thú/thành tích với người khác không?",
+    "8. Người đó có hành vi lặp đi lặp lại không?",
+    "9. Người đó có gặp khó khăn khi thay đổi thói quen hoặc môi trường không?",
+    "10. Người đó có khó hiểu các quy tắc xã hội cơ bản không?"
+]
 
-    # 10 câu hỏi A1 đến A10
-    a1 = st.selectbox("1. Có khi nào người được đánh giá tránh giao tiếp bằng mắt?", ["Không", "Có"])
-    a2 = st.selectbox("2. Người đó có thích chơi một mình?", ["Không", "Có"])
-    a3 = st.selectbox("3. Người đó có hay lặp lại từ/ngôn ngữ không?", ["Không", "Có"])
-    a4 = st.selectbox("4. Người đó có khó khăn khi hiểu cảm xúc người khác?", ["Không", "Có"])
-    a5 = st.selectbox("5. Có khi nào người đó không phản hồi khi được gọi tên?", ["Không", "Có"])
-    a6 = st.selectbox("6. Người đó có nhạy cảm với âm thanh không?", ["Không", "Có"])
-    a7 = st.selectbox("7. Có khi nào người đó không chia sẻ hứng thú hoặc thành tích với người khác?", ["Không", "Có"])
-    a8 = st.selectbox("8. Người đó có hành vi lặp đi lặp lại không?", ["Không", "Có"])
-    a9 = st.selectbox("9. Người đó có gặp khó khăn khi thay đổi thói quen hoặc môi trường không?", ["Không", "Có"])
-    a10 = st.selectbox("10. Có khi nào người đó không hiểu các quy tắc xã hội cơ bản không?", ["Không", "Có"])
+aq_answers = []
+for i, q in enumerate(questions_vi, 1):
+    ans = st.radio(q, ["Không", "Có"], key=f"q{i}")
+    aq_answers.append(1 if ans == "Có" else 0)
 
-   
-# Bộ 10 câu hỏi AQ-10
-aq_questions = []
-for i in range(1, 11):
-    ans = st.radio(f"Câu hỏi {i}", ["No", "Yes"], key=f"q{i}")
-    aq_questions.append(1 if ans == "Yes" else 0)
-
-# Thông tin khác
+# 🧑‍💻 Thông tin khác
 age = st.number_input("Tuổi", min_value=1, max_value=100, value=18)
-gender = st.selectbox("Giới tính", ["male", "female"])
-jaundice = st.radio("Có bị vàng da lúc sinh?", ["No", "Yes"])
-autism = st.radio("Gia đình có người tự kỷ?", ["No", "Yes"])
+gender = st.selectbox("Giới tính", ["Nam", "Nữ"])
+jundice = st.radio("Có bị vàng da lúc sinh không?", ["Không", "Có"])
+autism = st.radio("Gia đình có người tự kỷ không?", ["Không", "Có"])
 relation = st.selectbox("Người trả lời bảng khảo sát", 
-                        ["Self", "Parent", "Relative", "Health care professional", "Others"])
-used_app_before = st.radio("Đã dùng app trước đây?", ["No", "Yes"])
+                        ["Bản thân", "Cha/mẹ", "Người thân", "Chuyên gia y tế", "Khác"])
+used_app_before = st.radio("Đã từng dùng ứng dụng này trước đây chưa?", ["Không", "Có"])
+country = st.text_input("Quốc gia cư trú", "Vietnam")
 
-# Convert đầu vào thành DataFrame
-input_data = pd.DataFrame([aq_questions + [
+# 👉 Chuyển dữ liệu đầu vào thành DataFrame
+input_data = pd.DataFrame([aq_answers + [
     age,
-    1 if autism == "Yes" else 0,
-    1 if jaundice == "Yes" else 0,
-    1 if used_app_before == "Yes" else 0,
-    gender,
+    gender.lower(),          # giữ nguyên dạng text để CatBoost nhận
+    1 if jundice == "Có" else 0,
+    1 if autism == "Có" else 0,
+    country,
+    1 if used_app_before == "Có" else 0,
     relation
-]], columns=[f"A{i}" for i in range(1, 10+1)] + 
-         ["age", "autism", "jaundice", "used_app_before", "gender", "relation"])
+]], columns=[f"A{i}" for i in range(1, 11)] + 
+         ["age", "gender", "jundice", "autism", "contry_of_res", "used_app_before", "relation"])
 
 # --- Dự đoán ---
 if st.button("🔍 Dự đoán"):
     pred = model.predict(input_data)[0]
     proba = model.predict_proba(input_data)[0][1]
 
-    # Hiển thị kết quả
     if pred == 1:
         st.error(f"⚠️ Nguy cơ **cao** mắc ASD (xác suất: {proba:.2f})")
-        st.write("👉 Khuyến nghị: Bạn nên tham khảo ý kiến bác sĩ chuyên khoa để được đánh giá chi tiết hơn.")
+        st.write("👉 Khuyến nghị: Tham khảo ý kiến bác sĩ chuyên khoa để được đánh giá chi tiết.")
     else:
         st.success(f"✅ Nguy cơ **thấp** mắc ASD (xác suất: {proba:.2f})")
-        st.write("👉 Khuyến nghị: Tiếp tục theo dõi và hỗ trợ phát triển hành vi xã hội cho cá nhân.")
+        st.write("👉 Khuyến nghị: Tiếp tục theo dõi và hỗ trợ phát triển hành vi xã hội.")
 
-    # 🔎 Giải thích kết quả
+    # 📊 Giải thích kết quả
     st.subheader("📊 Yếu tố ảnh hưởng đến kết quả")
-
     if shap_installed:
         explainer = shap.TreeExplainer(model)
         shap_values = explainer(input_data)
-
         fig, ax = plt.subplots()
         shap.plots.waterfall(shap_values[0], show=False)
         st.pyplot(fig)
     else:
-        st.warning("⚠️ SHAP chưa được cài đặt. Hiển thị Feature Importance thay thế.")
-        feature_importances = model.get_feature_importance()
+        st.warning("⚠️ SHAP chưa cài đặt. Hiển thị Feature Importance thay thế.")
         feat_df = pd.DataFrame({
-            "Feature": input_data.columns,
-            "Importance": feature_importances
-        }).sort_values(by="Importance", ascending=False)
+            "Đặc trưng": input_data.columns,
+            "Tầm quan trọng": model.get_feature_importance()
+        }).sort_values(by="Tầm quan trọng", ascending=False)
+        st.bar_chart(feat_df.set_index("Đặc trưng"))
 
-        st.bar_chart(feat_df.set_index("Feature"))
