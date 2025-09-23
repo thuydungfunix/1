@@ -28,6 +28,20 @@ model = load_model()
 st.title("🧠 Autism Screening App (CatBoost)")
 st.subheader("Nhập thông tin để sàng lọc")
 
+
+    # 10 câu hỏi A1 đến A10
+    a1 = st.selectbox("1. Có khi nào người được đánh giá tránh giao tiếp bằng mắt?", ["Không", "Có"])
+    a2 = st.selectbox("2. Người đó có thích chơi một mình?", ["Không", "Có"])
+    a3 = st.selectbox("3. Người đó có hay lặp lại từ/ngôn ngữ không?", ["Không", "Có"])
+    a4 = st.selectbox("4. Người đó có khó khăn khi hiểu cảm xúc người khác?", ["Không", "Có"])
+    a5 = st.selectbox("5. Có khi nào người đó không phản hồi khi được gọi tên?", ["Không", "Có"])
+    a6 = st.selectbox("6. Người đó có nhạy cảm với âm thanh không?", ["Không", "Có"])
+    a7 = st.selectbox("7. Có khi nào người đó không chia sẻ hứng thú hoặc thành tích với người khác?", ["Không", "Có"])
+    a8 = st.selectbox("8. Người đó có hành vi lặp đi lặp lại không?", ["Không", "Có"])
+    a9 = st.selectbox("9. Người đó có gặp khó khăn khi thay đổi thói quen hoặc môi trường không?", ["Không", "Có"])
+    a10 = st.selectbox("10. Có khi nào người đó không hiểu các quy tắc xã hội cơ bản không?", ["Không", "Có"])
+
+   
 # Bộ 10 câu hỏi AQ-10
 aq_questions = []
 for i in range(1, 11):
