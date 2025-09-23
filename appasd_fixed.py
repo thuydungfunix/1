@@ -19,7 +19,7 @@ st.set_page_config(page_title="ASD Screening", page_icon="🧠", layout="centere
 @st.cache_resource
 def load_model():
     model = CatBoostClassifier()
-    model.load_model("catboost_asd_model.cbm")  # thay bằng file model đã train
+    model.load_model("catboost_model.cbm")  # thay bằng file model đã train
     return model
 
 model = load_model()
