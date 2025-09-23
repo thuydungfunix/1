@@ -72,15 +72,12 @@ relation = relation_map[relation_vi]
 used_app_vi = st.radio("Đã từng dùng ứng dụng này trước đây chưa?", ["Không", "Có"])
 used_app_before = 1 if used_app_vi == "Có" else 0
 
-country = st.text_input("Quốc gia cư trú", "Vietnam")
-
 # 👉 Tạo DataFrame
 input_data = pd.DataFrame([aq_answers + [
     age,
     gender,
     jundice,
     autism,
-    country,
     used_app_before,
     relation
 ]], columns=[f"A{i}" for i in range(1, 11)] + 
@@ -92,7 +89,7 @@ st.write(input_data)
 
 # --- Dự đoán ---
 if st.button("🔍 Dự đoán"):
-    cat_features = ["gender", "contry_of_res", "relation"]
+    cat_features = ["gender",  "relation"]
 
     pred = model.predict(input_data, cat_features=cat_features)[0]
     proba = model.predict_proba(input_data, cat_features=cat_features)[0][1]
