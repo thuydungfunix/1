@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from catboost import CatBoostClassifier
 
@@ -47,32 +46,56 @@ for i, q in enumerate(questions_vi, 1):
     ans = st.radio(q, ["Không", "Có"], key=f"q{i}")
     aq_answers.append(1 if ans == "Có" else 0)
 
-# 🧑‍💻 Thông tin khác
+# 🧑‍💻 Thông tin khác (hiển thị tiếng Việt nhưng mapping sang English/number cho model)
 age = st.number_input("Tuổi", min_value=1, max_value=100, value=18)
-gender = st.selectbox("Giới tính", ["Nam", "Nữ"])
-jundice = st.radio("Có bị vàng da lúc sinh không?", ["Không", "Có"])
-autism = st.radio("Gia đình có người tự kỷ không?", ["Không", "Có"])
-relation = st.selectbox("Người trả lời bảng khảo sát", 
-                        ["Bản thân", "Cha/mẹ", "Người thân", "Chuyên gia y tế", "Khác"])
-used_app_before = st.radio("Đã từng dùng ứng dụng này trước đây chưa?", ["Không", "Có"])
+
+gender_vi = st.selectbox("Giới tính", ["Nam", "Nữ"])
+gender = "male" if gender_vi == "Nam" else "female"
+
+jundice_vi = st.radio("Có bị vàng da lúc sinh không?", ["Không", "Có"])
+jundice = 1 if jundice_vi == "Có" else 0
+
+autism_vi = st.radio("Gia đình có người tự kỷ không?", ["Không", "Có"])
+autism = 1 if autism_vi == "Có" else 0
+
+relation_vi = st.selectbox("Người trả lời bảng khảo sát", 
+                           ["Bản thân", "Cha/mẹ", "Người thân", "Chuyên gia y tế", "Khác"])
+relation_map = {
+    "Bản thân": "Self",
+    "Cha/mẹ": "Parent",
+    "Người thân": "Relative",
+    "Chuyên gia y tế": "Health care professional",
+    "Khác": "Others"
+}
+relation = relation_map[relation_vi]
+
+used_app_vi = st.radio("Đã từng dùng ứng dụng này trước đây chưa?", ["Không", "Có"])
+used_app_before = 1 if used_app_vi == "Có" else 0
+
 country = st.text_input("Quốc gia cư trú", "Vietnam")
 
-# 👉 Chuyển dữ liệu đầu vào thành DataFrame
+# 👉 Tạo DataFrame
 input_data = pd.DataFrame([aq_answers + [
     age,
-    gender.lower(),          # giữ nguyên dạng text để CatBoost nhận
-    1 if jundice == "Có" else 0,
-    1 if autism == "Có" else 0,
+    gender,
+    jundice,
+    autism,
     country,
-    1 if used_app_before == "Có" else 0,
+    used_app_before,
     relation
 ]], columns=[f"A{i}" for i in range(1, 11)] + 
          ["age", "gender", "jundice", "autism", "contry_of_res", "used_app_before", "relation"])
 
+# Hiển thị lại dữ liệu đầu vào
+st.subheader("📋 Dữ liệu đầu vào")
+st.write(input_data)
+
 # --- Dự đoán ---
 if st.button("🔍 Dự đoán"):
-    pred = model.predict(input_data)[0]
-    proba = model.predict_proba(input_data)[0][1]
+    cat_features = ["gender", "contry_of_res", "relation"]
+
+    pred = model.predict(input_data, cat_features=cat_features)[0]
+    proba = model.predict_proba(input_data, cat_features=cat_features)[0][1]
 
     if pred == 1:
         st.error(f"⚠️ Nguy cơ **cao** mắc ASD (xác suất: {proba:.2f})")
@@ -86,6 +109,7 @@ if st.button("🔍 Dự đoán"):
     if shap_installed:
         explainer = shap.TreeExplainer(model)
         shap_values = explainer(input_data)
+
         fig, ax = plt.subplots()
         shap.plots.waterfall(shap_values[0], show=False)
         st.pyplot(fig)
@@ -96,4 +120,5 @@ if st.button("🔍 Dự đoán"):
             "Tầm quan trọng": model.get_feature_importance()
         }).sort_values(by="Tầm quan trọng", ascending=False)
         st.bar_chart(feat_df.set_index("Đặc trưng"))
+
 
