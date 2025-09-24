@@ -89,8 +89,7 @@ st.write(input_data)
 
 # --- Dự đoán ---
 if st.button("🔍 Dự đoán"):
-    cat_features = ["gender",  "relation"]
-
+    # CatBoost đã lưu cat_features, không cần truyền lại ở đây
     pred = model.predict(input_data)[0]
     proba = model.predict_proba(input_data)[0][1]
 
@@ -100,6 +99,7 @@ if st.button("🔍 Dự đoán"):
     else:
         st.success(f"✅ Nguy cơ **thấp** mắc ASD (xác suất: {proba:.2f})")
         st.write("👉 Khuyến nghị: Tiếp tục theo dõi và hỗ trợ phát triển hành vi xã hội.")
+
 
     # 📊 Giải thích kết quả
     st.subheader("📊 Yếu tố ảnh hưởng đến kết quả")
