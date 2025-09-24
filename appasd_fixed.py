@@ -86,6 +86,16 @@ input_data = pd.DataFrame([aq_answers + [
 # Hiển thị lại dữ liệu đầu vào
 st.subheader("📋 Dữ liệu đầu vào")
 st.write(input_data)
+# Ép kiểu dữ liệu
+for col in [f"A{i}" for i in range(1, 11)] + ["age", "jundice", "autism", "used_app_before"]:
+    input_data[col] = input_data[col].astype(int)
+
+input_data["gender"] = input_data["gender"].astype(str)
+input_data["relation"] = input_data["relation"].astype(str)
+
+# Dự đoán
+pred = model.predict(input_data)[0]
+proba = model.predict_proba(input_data)[0][1]
 
 # --- Dự đoán ---
 if st.button("🔍 Dự đoán"):
