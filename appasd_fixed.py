@@ -98,9 +98,11 @@ st.subheader("📋 Dữ liệu đầu vào sau xử lý")
 st.write(input_df)
 
 # --- Dự đoán ---
+# --- Dự đoán ---
 if st.button("🔍 Dự đoán"):
-    pred = model.predict(X_scaled)[0]
-    proba = model.predict_proba(X_scaled)[0][1]
+    # ⚠️ Không dùng scaler cho CatBoost
+    pred = model.predict(input_df)[0]
+    proba = model.predict_proba(input_df)[0][1]
 
     if pred == 1:
         st.error(f"⚠️ Nguy cơ **cao** mắc ASD (xác suất: {proba:.2f})")
