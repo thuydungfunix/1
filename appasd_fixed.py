@@ -91,8 +91,8 @@ st.write(input_data)
 if st.button("🔍 Dự đoán"):
     cat_features = ["gender",  "relation"]
 
-    pred = model.predict(input_data, cat_features=cat_features)[0]
-    proba = model.predict_proba(input_data, cat_features=cat_features)[0][1]
+    pred = model.predict(input_data)[0]
+    proba = model.predict_proba(input_data)[0][1]
 
     if pred == 1:
         st.error(f"⚠️ Nguy cơ **cao** mắc ASD (xác suất: {proba:.2f})")
