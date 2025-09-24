@@ -80,8 +80,8 @@ input_data = pd.DataFrame([aq_answers + [
     autism,
     used_app_before,
     relation
-]], columns=[f"A{i}" for i in range(1, 10)] + 
-         ["age", "gender", "jundice", "autism", "contry_of_res", "used_app_before", "relation"])
+]], columns=[f"A{i}" for i in range(1, 11)] + 
+         ["age", "gender", "jundice", "autism", "used_app_before", "relation"])
 
 # Hiển thị lại dữ liệu đầu vào
 st.subheader("📋 Dữ liệu đầu vào")
